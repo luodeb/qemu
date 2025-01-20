@@ -175,6 +175,8 @@ static const MemMapEntry base_memmap[] = {
     [VIRT_FW_CFG] =             { 0x09020000, 0x00000018 },
     [VIRT_GPIO] =               { 0x09030000, 0x00001000 },
     [VIRT_UART1] =              { 0x09040000, 0x00001000 },
+    [VIRT_UART2] =              { 0x09100000, 0x00001000 },
+    [VIRT_UART3] =              { 0x09140000, 0x00001000 },
     [VIRT_SMMU] =               { 0x09050000, 0x00020000 },
     [VIRT_PCDIMM_ACPI] =        { 0x09070000, MEMORY_HOTPLUG_IO_LEN },
     [VIRT_ACPI_GED] =           { 0x09080000, ACPI_GED_EVT_SEL_LEN },
@@ -224,6 +226,8 @@ static const int a15irqmap[] = {
     [VIRT_UART1] = 8,
     [VIRT_ACPI_GED] = 9,
     [VIRT_MMIO] = 16, /* ...to 16 + NUM_VIRTIO_TRANSPORTS - 1 */
+    [VIRT_UART2] = 21,
+    [VIRT_UART3] = 22,
     [VIRT_GIC_V2M] = 48, /* ...to 48 + NUM_GICV2M_SPIS - 1 */
     [VIRT_SMMU] = 74,    /* ...to 74 + NUM_SMMU_IRQS - 1 */
     [VIRT_PLATFORM_BUS] = 112, /* ...to 112 + PLATFORM_BUS_NUM_IRQS -1 */
@@ -2380,6 +2384,20 @@ static void machvirt_init(MachineState *machine)
         if (serial1) {
             vms->second_ns_uart_present = true;
             create_uart(vms, VIRT_UART1, sysmem, serial1, false);
+        }
+
+        Chardev *serial2 = serial_hd(2);
+
+        if (serial2) {
+            vms->second_ns_uart_present = true;
+            create_uart(vms, VIRT_UART2, sysmem, serial2, false);
+        }
+
+        Chardev *serial3 = serial_hd(3);
+
+        if (serial3) {
+            vms->second_ns_uart_present = true;
+            create_uart(vms, VIRT_UART3, sysmem, serial3, false);
         }
     }
     create_uart(vms, VIRT_UART0, sysmem, serial_hd(0), false);
